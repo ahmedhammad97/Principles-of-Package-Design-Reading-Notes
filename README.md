@@ -1,5 +1,7 @@
 # Principles of Package Design Reading Notes
 
+
+
 ## Introduction
 The book have two main parts, one for discussing class design principles (*SOLID* principles), and another for discussing packages design principles (mainly *cohesion* and *coupling*).
 
@@ -91,4 +93,89 @@ Classes that almost never need an interface are:
 - Classes that models some concept from your domain
 - Classes that otherwise represents stateful objects
 - Classes that represents a particular piece of business logic, or a calculation
-- 
+
+
+
+## PART 2: Package Design
+
+Writing packages and classes is much more difficult than writing just code statements.
+
+This part is will discuss six principles related to two main concepts:
+
+#### **Cohesion**
+Cohesion is about which classes belongs together. There are different ways of cohesion (eg. *logical cohesion*, *communicational cohesion*, etc.), but the most important is *functional cohesion*, which is achieved when all things in a "module" (eg. package) can be used to perform a single, well-defined task.
+
+SOLID principles automatically enforce the classes to be more cohesive, but there are three more principles to help in that. Applying these principles will lead to smaller packages that are easier to maintain and use.
+
+#### Coupling
+
+Coupling is when a code entity (eg. class) depends on another one. When a class from one package depends on a class from another package, it is called *package coupling*.
+
+The upcoming three principles will prevent your systems from having incompatible dependency versions, circular dependencies, or depending on unstable dependencies at all.
+ 
+
+### The Release/Reuse Equivalence Principle
+
+**The granule of reuse is the granule of release.**
+
+You can only reuse the code that you actually release, and you should only release as much code as you can reasonably reuse. It makes no sense to invest all the time and energy needed to properly release code if nobody is going to use anyways.
+
+If you decided to release a package, these are the things you need to take care of:
+- Keep your package under version control (eg. Git)
+- Add Package definition file (eg. *package.json*, *app.csproj*, etc.)
+- Use semantic versioning (eg. 1.0.2, 1.5.3, 2.0.0, etc.)
+- Design for backward compatibility (eg. provide the same functionality in previous minor versions)
+- Do not throw anything away (eg. classes, functions, parameters, constants, etc.)
+- When you rename something, add a proxy with the old name that calls the newly named function. Annotate is as deprecated though
+- Only add parameters at the end and with a default value
+- Functions should not have implicit side effects (as consumers might depend on it)
+- Dependency versions should be permissive (ie. not too strict as 2.3.5, but as loose as 2.x.x)
+- Use objects instead of primitive values
+- Use objects for encapsulation of state and behavior
+- Use object factories
+- Add metafiles (eg. README, License, etc.)
+- Use static analysis tools
+- Add tests
+- Setup continuous integration
+
+### The Common Reuse Principle
+
+**Classes that are used together are packed together.**
+
+This principle helps us decide which classes should be put together in a package, and which classes should be moved to another package.
+
+A package that adheres to this principle has the following characteristics:
+- It is coherent, which means all the classes it contains are about the same thing
+- All its dependencies are required (ie. it has not optional dependencies)
+- It uses dependency inversion to avoid concrete dependencies
+- It is open for extension and closed for modification
+
+Packages that violates the principle usually have some *parallel* features that are not materially related. This is usually achieved through splitting the package or extracting only the problematic parts into another package. At the end, classes that are *always used together* should be together.
+
+Splitting packages have their cost too. The smaller the packages are, the more you will have of them, the more work you have to put into making new releases, managing repositories, issues, etc. Therefore, you need to find the golden middle between too many small packages, and too few large packages.
+
+In practice I tend to just create the class inside the package I am already working on. Afterward, I may decide to move it to another package, based on the following facts:
+- If the class introduce a dependency that is optional/suggested
+- If the class is useful without the rest of the package
+
+This principle can only be maximized. You cannot always follow it perfectly.
+
+### The Common Closure Principle
+
+**A change that affects a package affects all the classes in that package.**
+
+Following this principles will prevent you from opening a package for all kinds of unrelated reasons, which itself prevents new releases that are irrelevant to most of the consumers.
+
+This is achieved by grouping the classes that changes together in a separate package.
+
+There are still some reasons for which it is okay to open a package:
+- If something changes about a dependency (eg. upgrade, replacement, etc.)
+- If requirements have changed regarding a piece of business logic
+- If part of the infrastructure changes
+
+You should track how many packages need to be released again after each change, and aim to minimize this number by splitting the package.
+
+#### The Tension Triangle of Cohesion Principles
+
+Robert Martin suggests that the three cohesion principles form a triangle (one at each vertex). A package may move anywhere around the triangle in its life cycle, favoring a principle over the other (where moving to a corner means it implements it maximally but neglects the other principles).
+
