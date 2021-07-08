@@ -179,3 +179,44 @@ You should track how many packages need to be released again after each change, 
 
 Robert Martin suggests that the three cohesion principles form a triangle (one at each vertex). A package may move anywhere around the triangle in its life cycle, favoring a principle over the other (where moving to a corner means it implements it maximally but neglects the other principles).
 
+### The Acyclic Dependencies Principle
+
+**There must be no cycles in the dependency structure.**
+
+Packages can get coupled together through composition, inheritance, interface implementation, object instantiation, global function usage, and more. However, when two packages depend on each other in a cyclic way it might cause irresolvable problems.
+
+The first two question to ask in the case of a circular dependency are:
+- Is it really the entire object that we need? If not, we can just inject the part we need and effectively remove the cycle.
+- Is it possible to change the relationship from bidirectional to unidirectional?
+
+The cyclic dependency can be further solved through other techniques:
+- Extracting the classes causing the cycle into new separate packages (or may be the same package if they are always used together).
+- Use dependency inversion by depending on an abstract entity rather than a concrete class
+- Applying any behavioral design pattern (eg. Mediator) to break the communication between the dependent objects
+- Applying *Chain of Responsibility* pattern
+- Using a combination of both *Mediator* and *Chain of Responsibility* patterns, which turns to be an *event dispatcher*.
+
+### The Stable Dependencies Principle
+
+**A package should only depend upon packages that are more stable than it is.**
+
+Before adding a dependency to your project, you need to consider whether it is likely that the dependency is going to change. How easy for the maintainers to change it? And is it considered *stable* or *unstable*?
+
+A package that needs to change often to accommodate a change in one of its dependencies should be considered unstable. However there is a more accurate way of measuring stability, which is the *I metric*. (ie. Instability metric).
+
+*I metric* equals *C-out* divided by *C-in* plus *C-out*, where *C-in* is the number of outside classes dependent on the package, and *C-out* is the number of outside classes that the package depends on. A highly instable package have an *I-metric* near 1, while stable packages have an *I metric* near 0.
+
+Sometimes it is not an option to modify the dependency packages, however, it is always an option to apply dependency inversion and create an abstraction (eg. interface) to depend on instead of directly depending on the outer package.
+
+### The Stable Abstraction Principle
+
+**The abstraction of a package should be in proportion to its stability.**
+
+It's always better to depend on an abstract package than on a concrete package, and dependencies should have and increasing abstractness.
+
+*A metric* is a way of calculating the packages stability. *A metric* equals *C-abstract* divided by *C-concrete* plus *C-abstract*, where *C-abstract* is number of abstract classes in the package, and *C-concrete* is the number of concrete classes in the package. A high abstract package will have an *A metric* near 1.
+
+It might look that extracting all interfaces from a package to a separate package might enforce the problem, however, it does not. It also violates the *Common Reuse principle*
+
+Applying this principle will increase stability as well.
+
