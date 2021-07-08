@@ -220,3 +220,7 @@ It might look that extracting all interfaces from a package to a separate packag
 
 Applying this principle will increase stability as well.
 
+## <a name="more">More Reading Notes</a>
+- [Designing Data Intensive Applications](https://github.com/ahmedhammad97/Designing-Data-Intensive-Applications-Notes)
+- [Clean Code](https://github.com/ahmedhammad97/Clean-Code-Do-And-Dont)
+- [Software Architecture Patterns](https://github.com/ahmedhammad97/Software-Architecture-Patterns-Notes)
