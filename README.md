@@ -1,17 +1,32 @@
 # Principles of Package Design Reading Notes
 
+### Content
+- [Introduction](#intro)
+- [Class Design](#class)
+	- [The Single Responsibility Principle](#single)
+	- [The Open/Closed Principle](#open)
+	- [The Liskov Substitution Principle](#liskov)
+	- [The Interface Segregation Principle](#isp)
+	- [The Dependency Inversion Principle](#dip)
+- [Package Design](#package)
+	- [The Release/Reuse Equivalence Principle](#release)
+	- [The Common Reuse Principle](#reuse)
+	- [The Common Closure Principle](#closure)
+	- [The Acyclic Dependencies Principle](#acyclic)
+	- [The Stable Dependencies Principle](#dependency)
+	- [The Stable Abstraction Principle](#abstraction)
+- [More Reading Notes](#more)
 
-
-## Introduction
+## <a name="intro">Introduction</a>
 The book have two main parts, one for discussing class design principles (*SOLID* principles), and another for discussing packages design principles (mainly *cohesion* and *coupling*).
 
-## PART 1: Class Design
+## <a name="class">PART 1: Class Design</a>
 
 It is harder to be strict about the class design principles. You are not required to always follow them, but in theory you *should*.
 
 The SOLID principles prepare your codebase for future changes, you want these changes to be local and small, not global and big.
 
-### The Single Responsibility Principle
+### <a name="single">The Single Responsibility Principle</a>
 
 **A class should have one, and only one, reason to changes.**
 
@@ -21,11 +36,11 @@ You will notice that class with single responsibility is easier to test, and mai
 
 A sign of a class with many responsibilities is that it has many dependencies which are injected as constructor arguments.
 
-### The Open/Closed Principle
+### <a name="open">The Open/Closed Principle</a>
 
 **You should be able to extend a class's behavior without modifying it.**
 
-Extension of a class means that you can influence its behavior from the outside and leave the class untouched. This is usually done through several steps:
+Extension of a class means that you can influence its behavior from the outside and leave the class untouched. This is usually done through:
 - Apply the Single Responsibility principle to extract any collaborating objects
 - Inject collaborating objects as constructor arguments (eg. dependency injection)
 - Depend on abstractions (eg. interfaces) instead of concrete implementations
@@ -40,7 +55,7 @@ There a list of characteristics of a class that violates the open/closed princip
 - Inside the class, objects are being created using the `new` operator
 - The class has protected properties or methods, to allow changing its behavior by overriding state or behavior
 
-### The Liskov Substitution Principle
+### <a name="liskov">The Liskov Substitution Principle</a>
 
 **Derived classes must be substitutable for their base classes.**
 
@@ -54,7 +69,7 @@ The most common violations for this principle are:
 - Improper generalization or *leaky abstraction*, when a single base class exposes more functions that needed for single use case. This is usually solved by splitting the base class or interface into smaller pieces, each suitable for just one specific use case.
 - When a derived class and its base class returns different types for the same function. This is usually solved by allowing the wrapping the derived class output by a subtype of the base class output.
 
-### The Interface Segregation Principle
+### <a name="isp">The Interface Segregation Principle</a>
 
 **Make fine-grained interfaces that are client specific**
 
@@ -64,13 +79,13 @@ The most common violation for this principle is when a client is forced to depen
 
 Applying this principle leads to smaller interface which reduces the number of reasons to change. Also, it gives us the freedom to add more public functions that are not part of the published interface.
 
-### The Dependency Inversion Principle
+### <a name="dip">The Dependency Inversion Principle</a>
 
 **Depend on abstractions, not on concretions.**
 
 Abstractions should not depend upon details, but details should always depend upon abstractions.
 
-Every class has two levels of abstractions: one perceived by the clients that should be more abstract, and another that is going on inside that is more concrete.
+Every class has two levels of abstractions: one perceived by the clients that should be more abstract, and another that is inside that is more concrete.
 
 Usually this is done through introducing interfaces that decouples the class from any concrete dependency. However, simply depending on an interface is not always enough, sometimes we have to introduce intermediate dependencies that bridges that gap between high-level and low-level classes.
 
@@ -96,7 +111,7 @@ Classes that almost never need an interface are:
 
 
 
-## PART 2: Package Design
+## <a name="package">PART 2: Package Design</a>
 
 Writing packages and classes is much more difficult than writing just code statements.
 
@@ -114,7 +129,7 @@ Coupling is when a code entity (eg. class) depends on another one. When a class 
 The upcoming three principles will prevent your systems from having incompatible dependency versions, circular dependencies, or depending on unstable dependencies at all.
  
 
-### The Release/Reuse Equivalence Principle
+### <a name="release">The Release/Reuse Equivalence Principle</a>
 
 **The granule of reuse is the granule of release.**
 
@@ -138,7 +153,7 @@ If you decided to release a package, these are the things you need to take care 
 - Add tests
 - Setup continuous integration
 
-### The Common Reuse Principle
+### <a name="reuse">The Common Reuse Principle</a>
 
 **Classes that are used together are packed together.**
 
@@ -150,7 +165,7 @@ A package that adheres to this principle has the following characteristics:
 - It uses dependency inversion to avoid concrete dependencies
 - It is open for extension and closed for modification
 
-Packages that violates the principle usually have some *parallel* features that are not materially related. This is usually achieved through splitting the package or extracting only the problematic parts into another package. At the end, classes that are *always used together* should be together.
+Packages that violates the principle usually have some *parallel* features that are not materially related. This is usually achieved through splitting the package or extracting only the problematic parts into another package. Classes that are *always used together* should be together.
 
 Splitting packages have their cost too. The smaller the packages are, the more you will have of them, the more work you have to put into making new releases, managing repositories, issues, etc. Therefore, you need to find the golden middle between too many small packages, and too few large packages.
 
@@ -160,7 +175,7 @@ In practice I tend to just create the class inside the package I am already work
 
 This principle can only be maximized. You cannot always follow it perfectly.
 
-### The Common Closure Principle
+### <a name="closure">The Common Closure Principle</a>
 
 **A change that affects a package affects all the classes in that package.**
 
@@ -177,9 +192,9 @@ You should track how many packages need to be released again after each change, 
 
 #### The Tension Triangle of Cohesion Principles
 
-Robert Martin suggests that the three cohesion principles form a triangle (one at each vertex). A package may move anywhere around the triangle in its life cycle, favoring a principle over the other (where moving to a corner means it implements it maximally but neglects the other principles).
+Robert Martin suggests that the three cohesion principles form a triangle (one at each vertex). A package may move anywhere around the triangle through its life cycle, favoring a principle over the other (where moving to a corner means it implements it maximally but neglects the other principles).
 
-### The Acyclic Dependencies Principle
+### <a name="acyclic">The Acyclic Dependencies Principle</a>
 
 **There must be no cycles in the dependency structure.**
 
@@ -196,7 +211,7 @@ The cyclic dependency can be further solved through other techniques:
 - Applying *Chain of Responsibility* pattern
 - Using a combination of both *Mediator* and *Chain of Responsibility* patterns, which turns to be an *event dispatcher*.
 
-### The Stable Dependencies Principle
+### <a name="dependency">The Stable Dependencies Principle</a>
 
 **A package should only depend upon packages that are more stable than it is.**
 
@@ -208,7 +223,7 @@ A package that needs to change often to accommodate a change in one of its depen
 
 Sometimes it is not an option to modify the dependency packages, however, it is always an option to apply dependency inversion and create an abstraction (eg. interface) to depend on instead of directly depending on the outer package.
 
-### The Stable Abstraction Principle
+### <a name="abstraction">The Stable Abstraction Principle</a>
 
 **The abstraction of a package should be in proportion to its stability.**
 
