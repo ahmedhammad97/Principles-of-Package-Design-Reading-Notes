@@ -1,5 +1,9 @@
 # Principles of Package Design Reading Notes
 
+Although it’s not one of the best-selling books, yet I believe it shortens the learning curve for every software engineer. What’s great about this book is that it creates a need for the knowledge before it introduces it to the reader. It tackles a set of topics that every SDE encounters on everyday work, and it gives a great list of examples and a very good referencing along the way.
+
+The book is available for purchase [here](https://matthiasnoback.nl/2018/12/principles-of-package-design-second-edition/)
+
 ### Content
 - [Introduction](#intro)
 - [Class Design](#class)
